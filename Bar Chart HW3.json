@@ -1,0 +1,86 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 500,
+  "height": 450,
+  "padding": 5,
+  "autosize": "fit",
+  "title": {
+    "text": {"signal": "'Losses 2015 [$] Damage Type: All'"},
+    "anchor": "start",
+    "frame": "group"
+  },
+  "data": [
+    {
+      "name": "AgriLosses",
+      "url": "https://raw.githubusercontent.com/abhaysm7/Vega/master/losses2015_transformed.csv",
+      "format": {"type": "csv", "parse": "auto", "delimiter": ","}
+    }
+    
+  ],
+
+    "signals": [
+    {
+      "name": "tooltip",
+      "value": {},
+      "on": [
+        {"events": "rect:hover", "update": "datum"},
+        {"events": "rect:hover",  "update": "{}"}
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "AgriLosses"},
+      "encode": {
+        "update": {
+          "x": {"scale": "x", "value": 0},
+          "x2": {"scale": "x", "field": "Amount"},
+          "y": {"scale": "y", "field": "Damage_Descp"},
+          "height": {"scale": "y", "band": 1}
+        }
+      },
+      "update": {
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "red"}
+        }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "AgriLosses", "field": "Amount"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "AgriLosses",
+        "field": "Damage_Descp",
+        "sort": {"op": "max", "field": "Amount", "order": "ascending"}
+      },
+      "range": "height",
+      "padding": 0.1
+    }
+  ],
+  "axes": [
+    {"scale": "x", "orient": "bottom", "format": "2s", "tickCount": 5},
+    {"scale": "y", "orient": "left"}
+  ],
+  "config": {},
+
+ "update": {
+          "x": {"scale": "x", "signal": "tooltip.Amount", "band": 0.5},
+          "y": {"scale": "y", "signal": "tooltip.Damage_Descp", "offset": -0},
+          "text": {"signal": "tooltip.Amount"},
+          "fillOpacity": [
+            {"test": "datum === tooltip", "value": 0},
+            {"value": 1}
+          ]
+        }
+}
